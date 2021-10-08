@@ -1,0 +1,40 @@
+########################################################################################
+# Network policy that Grant ingress communication from sleep to httpbin
+########################################################################################
+apiVersion: crd.projectcalico.org/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-from-sleep
+  namespace: httpbin-ns
+spec:
+  order: 10
+  selector: app == 'httpbin'
+  types:
+  - Ingress  
+  ingress:
+  - action: Allow
+    protocol: TCP
+    source:
+      services:
+        name: sleep
+        namespace: sleep-ns
+---
+########################################################################################
+# Network policy that Grant egress communication to httpbin from sleep
+########################################################################################
+apiVersion: crd.projectcalico.org/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-to-httpbin
+  namespace: sleep-ns
+spec:
+  order: 10
+  selector: app == 'sleep'
+  types:
+  - Egress  
+  egress:
+  - action: Allow
+    destination:
+      services: 
+        name: httpbin
+        namespace: httpbin-ns

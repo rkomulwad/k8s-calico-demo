@@ -1,0 +1,16 @@
+########################################################################################
+# Global Policy that ensures all pods can access the Kubernetes DNS service
+# The policy also activates global default deny across the whole cluster
+########################################################################################
+apiVersion: crd.projectcalico.org/v1
+kind: GlobalNetworkPolicy
+metadata:
+  name: allow-kube-dns
+spec:
+  selector: all()
+  egress:
+    - action: Allow
+      destination:
+        services:
+          name: kube-dns
+          namespace: kube-system
